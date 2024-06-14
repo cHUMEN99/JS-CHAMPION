@@ -1,0 +1,138 @@
+.try {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  margin-top: 150px;
+  padding-bottom: 1220px;
+  background: ghostwhite ;
+  box-shadow: 0px 10px 20px (0,0,0,0.04);
+ 
+  border-radius: 20px;
+  max-width: 1780px;
+  margin-bottom: 200px;
+  margin: 150px auto 200px;
+  width: 100%;
+  height: 1500px;
+}
+
+
+.headerRight1 {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  margin: 0;
+}
+
+.headerRight1 li {
+  margin-right: 20px;
+}
+
+.carousel-container {
+  width: 500px; /* збільшити ширину каруселі */
+  max-width: 100%;
+}
+
+.carousel-image img {
+  max-height: 400px; /* зменшити висоту зображень */
+  max-width: 500px; /* збільшити ширину зображень */
+  
+  
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.try2 {
+  margin-top: 20px;
+}
+
+.table {
+  list-style: none;
+  padding: 0;
+}
+
+.table-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.table-cell {
+  margin-right: 10px;
+}
+
+.price-section {
+  display: flex;
+  align-items: center;
+}
+
+.availability-row {
+  margin-bottom: 10px;
+}
+
+.availability {
+  color: green;
+}
+
+.lishka {
+  display: flex;
+}
+
+.lishka button {
+  margin-right: 15px;
+}
+.related-products {
+  display: flex; /* Change to flex to arrange items in a row */
+  align-items: center;
+  justify-content: space-between;
+  
+  margin-top: 250px;
+  width: 100%; /* Ensure it takes full width */
+}
+
+.related-products .card {
+  margin-right: 0px; /* Зменшуємо відстань між картками */
+}
+
+.try2 button{
+  background-color: #000;
+  border-radius: 18px;
+  cursor: pointer;
+  width: 100%;
+  height: 55px;
+  border: 0;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 500;
+  
+  
+}
+
+.try2 button:hover {
+  background-color: rgba(157, 213, 88, 0.9);
+}
+
+.footer {
+  position: relative; /* або 'static' залежно від випадку */
+  bottom: 0;
+  width: 100%;
+  padding: 20px 0; /* або інше значення */
+}
+
+.button.added-to-cart {
+  background-color: gray; /* Змінюємо колір фону на сірий */
+  color: white; /* Змінюємо колір тексту на білий */
+  cursor: default; /* Забороняємо зміну курсора при наведенні */
+}
+
+.button.added-to-cart:hover {
+  background-color: gray; /* Підтримуємо сірий колір при наведенні */
+  color: white; /* Підтримуємо білий колір тексту при наведенні */
+}
+
+

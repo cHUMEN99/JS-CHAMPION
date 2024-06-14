@@ -1,12 +1,12 @@
 import React from 'react';
-import { Link }  from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import AppContext from './context';
 
-function Header(props){
+function Header(props) {
   const { cartitems } = React.useContext(AppContext);
 
   const TotalPrice = cartitems.reduce((sum, obj) => Number(obj.price) + sum, 0);
-  
+
   return (
     <header className="header">
       <Link to="/">
@@ -18,16 +18,33 @@ function Header(props){
           </div>
         </div>
       </Link>
+      <div className="headermid">
+        <button>Товари</button>
+        <li>
+          <Link to="/partners">
+            <button>Партнери</button>
+          </Link>
+        </li>
+        <button>Про нас</button>
+        <button>Контакти</button>
+      </div>
       <ul className="headerRight">
         <li onClick={props.OnClickCart} style={{ cursor: 'pointer' }}>
-          <img height={18} width={18} src="/img/cart.svg.png" alt="" />
-          <span>{TotalPrice}$</span>
+          <img className="white-heart" height={18} width={18} src="/img/cart.svg.png" alt="" />
+          <span className="white-heart">{TotalPrice}₴</span>
         </li>
         <li>
           <Link to="/favorites">
-            <img height={18} width={18} src="/img/heart.png" alt="" />
+            <img className="white-heart" height={18} width={18} src="/img/heart.png" alt="" />
           </Link>
-          <img style={{ cursor: 'pointer' }} onClick={props.OnClickfavorite} height={18} width={18} src="/img/cart.png" alt="" />
+          <img
+            style={{ cursor: 'pointer' }}
+            onClick={props.OnClickfavorite}
+            height={18}
+            width={18}
+            src="/img/cart.png"
+            alt=""
+          />
         </li>
       </ul>
     </header>

@@ -7,10 +7,11 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
   const { setCartItems } = React.useContext(AppContext);
   const { cartitems } = React.useContext(AppContext);
 
-  // Розрахунок загальної суми замовлення
+
+
   const totalPrice = cartitems.reduce((sum, obj) => Number(obj.price) + sum, 0);
-  // Розрахунок податку
   const tax = totalPrice * 0.05;
+  
 
   const OnClickOrder = () => {
     setIsComplete(true);
@@ -26,20 +27,21 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
         </h2>
 
         {items.length > 0 ? (
-          <div className="items">
-            {items.map((obj) => (
-              <div className="cartitem" style={{ marginBottom: '20px' }} key={obj.id}>
-                <div style={{ backgroundImage: `url(${obj.imageUrl})` }} className="cartitemimg"></div>
-                <div className="cartname">
-                  <p>{obj.title}</p>
-                  <b>{obj.price}$</b>
-                  <div>
-                    <img onClick={() => OnRemove(obj.id)} className="remove" height={30} width={30} src="/img/hrestuk.png" alt="" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+         <div className="items">
+         {items.map((obj) => (
+           <div className="cartitem" style={{ marginBottom: '20px' }} key={obj.id}>
+             <div style={{ backgroundImage: `url(${obj.imageUrl})` }} className="cartitemimg"></div>
+             <div className="cartname">
+             
+               <p>{obj.title}</p>
+               <b>{obj.price}$</b>
+               <div>
+                 <img onClick={() => OnRemove(obj.id)} className="remove" height={30} width={30} src="/img/hrestuk.png" alt="" />
+               </div>
+             </div>
+           </div>
+         ))}
+       </div>
         ) : (
           <Info title={isComplete ? "Заказ оформлено" : "Корзина Пуста"} image={isComplete ? "/img/zamovlenya.png" : "/img/box.png"} />
         )}
