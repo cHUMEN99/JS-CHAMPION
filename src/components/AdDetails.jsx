@@ -9,7 +9,11 @@ function AdDetails({ excelData, OnAddToCart }) {
 
     useEffect(() => {
         if (excelData && id) {
-            const foundAd = excelData.find(item => String(item.B).trim() === String(id).trim());
+            console.log('Looking for ID:', id);
+            const foundAd = excelData.find(item => {
+                console.log('Checking item:', item.id, 'against ID:', id);
+                return String(item.id).trim() === String(id).trim();
+            });
             setAd(foundAd);
             setLoading(false);
         }
@@ -28,21 +32,21 @@ function AdDetails({ excelData, OnAddToCart }) {
     }
 
     let imageUrl = [];
-    if (ad.G) {
-        imageUrl = ad.G.split(/[, ]+/).map(url => url.trim());
+    if (ad['Фото товару']) {
+        imageUrl = ad['Фото товару'].split(/[, ]+/).map(url => url.trim());
     }
 
     return (
         <div>
             <h1>{ad.C}</h1>
             <Try
-                title={ad.C}
-                price={ad.D}
+                title={ad.Опис}
+                price={ad.Ціна}
                 imageUrl={imageUrl}
                 OnAddToCart={OnAddToCart}
                 id={id}
                 added={false}
-                description={ad.E} // наприклад, якщо є поле з описом
+                description={ad['Кількість, шт.']} // змінено з 'E' на 'Кількість, шт.'
             />
         </div>
     );

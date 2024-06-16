@@ -19,7 +19,11 @@ function Header(props) {
         </div>
       </Link>
       <div className="headermid">
-        <button>Товари</button>
+        <li>
+          <Link to="/tovar">
+            <button>Товари</button>
+          </Link>
+        </li>
         <li>
           <Link to="/partners">
             <button>Партнери</button>

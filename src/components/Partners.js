@@ -12,9 +12,9 @@ function Partners() {
                     
                     <img src="/img/motoul.png" alt="Масла Motours" />
                     <div style={{display:'flex',marginRight:'50px'}}>
-                    <p style={{marginRight:'300px'}}>Масла Motours</p>
-                    <p style={{marginRight:'300px'}}>Масла Motours</p>
-                    <p style={{marginRight:'300px'}}>Масла Motours</p>
+                    <p style={{marginRight:'300px'}}>Масла Motoul</p>
+                    <p style={{marginRight:'300px'}}>Масла Motoul</p>
+                    <p style={{marginRight:'300px'}}>Масла Motoul</p>
                     </div>
                 </div>
             </div>

@@ -12,6 +12,9 @@ import AdDetails from './components/AdDetails';
 import * as XLSX from 'xlsx';
 import Footer from './components/Footer';
 import Partners from './components/Partners';
+import Golovna from './components/pages/Golovna';
+import Golovnasecond from './components/pages/Golovnasecond';
+import './index.css'
 
 function App() {
     const [cartopend, setCartOpened] = useState(false);
@@ -22,6 +25,11 @@ function App() {
     const [isLoading, setIsLoading] = useState(true);
     const [items, setItems] = useState([]);
     console.log(excelData);
+    if (excelData && excelData.length > 0) {
+        console.log(excelData[0].name);
+    } else {
+        console.log("Excel data is not yet available or empty.");
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -30,15 +38,10 @@ function App() {
                 const cartResponse = await axios.get('https://661fd6f516358961cd95ad6e.mockapi.io/cart');
         
                 // Fetch Google Sheets data
-                const sheetURL = 'https://docs.google.com/spreadsheets/d/11IrWYOEe7F6E0vgKE4fa57H3SnhQAeRPGs73jg2RGvw/edit?usp=sharing';
-                const range = 'Sheet1!A1:Z100';
+                const sheetURL = 'https://docs.google.com/spreadsheets/d/11IrWYOEe7F6E0vgKE4fa57H3SnhQAeRPGs73jg2RGvw/export?format=xlsx';
+                
 
-                const response = await axios.get(sheetURL, {
-                    params: {
-                        range: range,
-                    },
-                    responseType: 'arraybuffer'
-                });
+                const response = await axios.get(sheetURL, { responseType: 'arraybuffer' });
 
                 const data = new Uint8Array(response.data);
                 const workbook = XLSX.read(data, { type: 'array' });
@@ -107,6 +110,10 @@ function App() {
                         <Route 
                             path="/favorites" 
                             element={<Favorites/>} 
+                        />
+                          <Route 
+                            path="/tovar" 
+                            element={<Golovnasecond/>} 
                         />
                          <Route 
                             path="/partners" 

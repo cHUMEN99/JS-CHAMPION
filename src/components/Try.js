@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
@@ -6,14 +6,66 @@ import Lightbox from 'react-awesome-lightbox';
 import 'react-awesome-lightbox/build/style.css';
 import './try.css';
 import Card from './Card';
+import * as XLSX from 'xlsx';
 
 function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
-  const [isAddedToCart, setIsAddedToCart] = React.useState(added);
+  const [isAddedToCart, setIsAddedToCart] = useState(added);
+  const [excelData, setExcelData] = useState(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const imageUrl = props.imageUrl && props.imageUrl.length > 0 ? props.imageUrl : ["/img/default-image.svg"];
 
-  const [lightboxOpen, setLightboxOpen] = React.useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  useEffect(() => {
+    const fetchExcelData = async () => {
+      try {
+        const response = await fetch('https://docs.google.com/spreadsheets/d/11IrWYOEe7F6E0vgKE4fa57H3SnhQAeRPGs73jg2RGvw/export?format=xlsx');
+        const buffer = await response.arrayBuffer();
+        const workbook = XLSX.read(buffer, { type: 'buffer' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+        setExcelData(jsonData);
+      } catch (error) {
+        console.error('Error fetching Excel data:', error);
+      }
+    };
+
+    fetchExcelData();
+  }, []);
+
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
+  const showCards = () => {
+    if (!excelData) {
+      return (
+        <div>Loading...</div>
+      );
+    }
+
+    const shuffledData = shuffleArray([...excelData]);
+    const randomCards = shuffledData.slice(0, 4);
+    
+    return randomCards.map((item, index) => (
+      <Card
+        key={index}
+        title={item['Опис']}
+        price={item['Ціна']}
+        imageUrl={item['Фото товару'].split(',')}
+        OnPlus={OnAddToCart}
+        OnFavorite={() => console.log("Нажми на карточку")}
+        id={item.id}
+        
+        loading={false}
+      />
+    ));
+  };
 
   const OnClickPlus = () => {
     if (!isAddedToCart) {
@@ -50,7 +102,7 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
                   className="carousel-image" 
                   onClick={() => { setLightboxOpen(true); setCurrentImageIndex(index); }}
                 >
-                  <img src={url} alt={`Motors ${index + 1}`} />
+                  <img  src={url} alt={`Motors ${index + 1}`} />
                 </div>
               ))}
             </Carousel>
@@ -164,32 +216,19 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
         </li>
       </ul>
       
-      <div className="related-products">
-        <h3>Вас також може зацікавити:</h3>
-        {/* Передаємо функцію OnAddToCart з компонента Try */}
-        <Card 
-          imageUrl={imageUrl}
-          OnPlus={OnAddToCart}
-        />
-        <Card 
-          imageUrl={imageUrl}
-          OnPlus={OnAddToCart}
-        />
-        <Card 
-          imageUrl={imageUrl}
-          OnPlus={OnAddToCart}
-        />
-        <Card 
-          imageUrl={imageUrl}
-          OnPlus={OnAddToCart}
-        />
+      <div style={{marginTop:'100px'}} className='recommendations'>
+        
+        <div style={{display:'flex',alignItems:'center'}} className='cards-container'>
+        <h2 style={{marginRight:'20px',marginBottom:'20px'}}>Схожі товари:  </h2>
+          {showCards()}
+        </div>
       </div>
-      {/* Відображення лайтбоксу */}
+      
       {lightboxOpen && (
-        <Lightbox
-          images={imageUrl.map(url => ({ url: url }))}
+        <Lightbox 
+          images={imageUrl.map((url) => ({ url }))}
           onClose={() => setLightboxOpen(false)}
-          index={currentImageIndex}
+          startIndex={currentImageIndex}
         />
       )}
     </div>
