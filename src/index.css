@@ -689,7 +689,57 @@ li{
   margin-right: 10px;
 }
 
+.order-history {
+  overflow-y: auto;
+  max-height: 400px;
+  border: 1px solid #ddd;
+  padding: 10px;
+}
 
+.order {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.cartitemimg {
+  max-width: 50px;
+  max-height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.drawer button {
+  background-color: #333; /* Темно-сірий колір для гарного контрасту */
+  border: 1px solid #555; /* Світліший сірий для виділення межі */
+  color: white; /* Білий текст для контрасту */
+  margin-top: 10px;
+  padding: 10px 15px; /* Збільшені відступи для кращого вигляду */
+  cursor: pointer;
+  border-radius: 20px; /* Більше заокруглені кути */
+  transition: background 0.3s ease; /* Плавний перехід для градієнта */
+}
+
+.drawer button:hover {
+  background: linear-gradient(135deg, #444, #555); /* Градієнт при наведенні */
+  border-color: #777; /* Зміна кольору межі при наведенні */
+}
+
+.phone-input {
+  width: 100%;
+  padding: 10px 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px; /* Заокруглені кути */
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.phone-input:focus {
+  border-color: #9DD558; /* Колір межі при фокусі */
+}
 
 
 

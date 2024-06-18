@@ -29,7 +29,11 @@ function Header(props) {
             <button>Партнери</button>
           </Link>
         </li>
-        <button>Про нас</button>
+        <li>
+          <Link to='/abaut'>
+              <button>Про нас</button>
+          </Link>
+        </li>
         <button>Контакти</button>
       </div>
       <ul className="headerRight">

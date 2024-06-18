@@ -15,6 +15,7 @@ import Partners from './components/Partners';
 import Golovna from './components/pages/Golovna';
 import Golovnasecond from './components/pages/Golovnasecond';
 import './index.css'
+import Abaut from './components/pages/abaut';
 
 function App() {
     const [cartopend, setCartOpened] = useState(false);
@@ -118,6 +119,10 @@ function App() {
                          <Route 
                             path="/partners" 
                             element={<Partners/>} 
+                        />
+                         <Route 
+                            path="/abaut" 
+                            element={<Abaut/>} 
                         />
                         <Route 
                             path="/cartochka" 

@@ -70,7 +70,7 @@ function Golovnasecond({ OnAddToCart, setFavoritOpend }) {
                 OnPlus={OnAddToCart}
                 OnFavorite={() => console.log("Нажми на карточку")}
                 id={item.id}
-                OnClickfavorite={() => setFavoritOpend(true)}
+                
                 loading={false}
             />
         ));
