@@ -82,6 +82,13 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
         setOrderHistory(savedOrderHistory);
     }, []);
 
+    const handlePhoneNumberChange = (e) => {
+        const input = e.target.value;
+        if (/^\d*$/.test(input) && input.length <= 10) {
+            setPhoneNumber(input);
+        }
+    };
+
     return (
         <div className="overley">
             <div className="drawer">
@@ -185,7 +192,7 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
                                                 type="text"
                                                 placeholder="Введіть номер телефону"
                                                 value={phoneNumber}
-                                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                                onChange={handlePhoneNumberChange}
                                                 className="phone-input" // Додаємо клас для стилізації
                                             />
                                             <button onClick={confirmOrder} disabled={!phoneNumber}>
@@ -212,7 +219,7 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
                         )}
                     </>
                 )}
-            </div>
+            </div>  
         </div>
     );
 }

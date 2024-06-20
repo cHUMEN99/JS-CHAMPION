@@ -216,6 +216,7 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
         </li>
       </ul>
       
+      
       <div style={{marginTop:'100px'}} className='recommendations'>
         
         <div style={{display:'flex',alignItems:'center'}} className='cards-container'>

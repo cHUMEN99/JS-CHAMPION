@@ -11,7 +11,7 @@ function Header(props) {
     <header className="header">
       <Link to="/">
         <div className="headerLeft">
-          <img width={40} height={40} src="/img/logo.jpg" alt="" />
+          <img width={40} height={40} src={`${process.env.PUBLIC_URL}/img/image.jpg`} alt="Logo" />
           <div className="headerInfo">
             <h1>Champion</h1>
             <p>Магазин автозапчастин</p>
@@ -34,25 +34,22 @@ function Header(props) {
               <button>Про нас</button>
           </Link>
         </li>
-        <button>Контакти</button>
+        <li>
+          <Link to="/register">
+            <button>Зареєструватися</button>
+          </Link>
+        </li>
       </div>
       <ul className="headerRight">
         <li onClick={props.OnClickCart} style={{ cursor: 'pointer' }}>
-          <img className="white-heart" height={18} width={18} src="/img/cart.svg.png" alt="" />
+          <img className="white-heart" height={18} width={18} src={`${process.env.PUBLIC_URL}/img/cart.svg.png`} alt="Cart" />
           <span className="white-heart">{TotalPrice}₴</span>
         </li>
         <li>
           <Link to="/favorites">
-            <img className="white-heart" height={18} width={18} src="/img/heart.png" alt="" />
+            <img className="white-heart" height={18} width={18} src={`${process.env.PUBLIC_URL}/img/heart.png`} alt="Favorites" />
           </Link>
-          <img
-            style={{ cursor: 'pointer' }}
-            onClick={props.OnClickfavorite}
-            height={18}
-            width={18}
-            src="/img/cart.png"
-            alt=""
-          />
+
         </li>
       </ul>
     </header>

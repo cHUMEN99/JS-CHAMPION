@@ -16,6 +16,7 @@ import Golovna from './components/pages/Golovna';
 import Golovnasecond from './components/pages/Golovnasecond';
 import './index.css'
 import Abaut from './components/pages/abaut';
+import Register from './components/Register';
 
 function App() {
     const [cartopend, setCartOpened] = useState(false);
@@ -124,6 +125,7 @@ function App() {
                             path="/abaut" 
                             element={<Abaut/>} 
                         />
+                        <Route path="/register" element={<Register />} />
                         <Route 
                             path="/cartochka" 
                             element={<Try
