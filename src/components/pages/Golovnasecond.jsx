@@ -5,26 +5,42 @@ import * as XLSX from 'xlsx';
 import ContentLoader from 'react-content-loader';
 import './Golovnasecond.css';
 
-
 function Golovnasecond({ OnAddToCart, setFavoritOpend }) {
     const [excelData, setExcelData] = useState(null);
+    const [randomCards, setRandomCards] = useState([]);
+    const [showPhoneButton, setShowPhoneButton] = useState(false);
+    const [showPhoneModal, setShowPhoneModal] = useState(false);
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
+    const [phoneIcon, setPhoneIcon] = useState('/img/phone.svg');
 
     useEffect(() => {
         const fetchExcelData = async () => {
             try {
                 const response = await fetch('https://docs.google.com/spreadsheets/d/11IrWYOEe7F6E0vgKE4fa57H3SnhQAeRPGs73jg2RGvw/export?format=xlsx');
                 const buffer = await response.arrayBuffer();
-                const workbook = XLSX.read(buffer, { type: 'buffer' });
+                const workbook = XLSX.read(buffer, { type: 'array' });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
                 const jsonData = XLSX.utils.sheet_to_json(sheet);
                 setExcelData(jsonData);
+
+                const shuffledData = shuffleArray([...jsonData]);
+                setRandomCards(shuffledData.slice(0, 4));
             } catch (error) {
                 console.error('Error fetching Excel data:', error);
             }
         };
 
         fetchExcelData();
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowPhoneButton(true);
+        }, 1000); // Відображення кнопки через 1 секунду
+
+        return () => clearTimeout(timer);
     }, []);
 
     const shuffleArray = (array) => {
@@ -36,7 +52,7 @@ function Golovnasecond({ OnAddToCart, setFavoritOpend }) {
     };
 
     const showCards = () => {
-        if (!excelData) {
+        if (!randomCards.length) {
             return (
                 <div>
                     <ContentLoader
@@ -58,29 +74,84 @@ function Golovnasecond({ OnAddToCart, setFavoritOpend }) {
             );
         }
 
-        const shuffledData = shuffleArray([...excelData]);
-        const randomCards = shuffledData.slice(0, 4);
-        
         return randomCards.map((item, index) => (
             <Card
                 key={index}
                 title={item['Опис']}
                 price={item['Ціна']}
-                imageUrl={item['Фото товару'].split(',')}
+                imageUrl={item['Фото товару'] ? item['Фото товару'].split(',') : []}
                 OnPlus={OnAddToCart}
                 OnFavorite={() => console.log("Нажми на карточку")}
                 id={item.id}
-                
                 loading={false}
             />
         ));
     };
 
+    const sendTelegramMessage = (message) => {
+        const botToken = '7203876334:AAFjSzR6uHirszWCBYLyJyA5RE9gb9snIWU';
+        const chatId = '825627138';
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Message sent:', data);
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+        });
+    };
+
+    const handlePhoneClick = () => {
+        setShowPhoneModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowPhoneModal(false);
+    };
+
+    const handlePhoneNumberChange = (e) => {
+        const input = e.target.value;
+        if (/^\d*$/.test(input) && input.length <= 10) {
+            setPhoneNumber(input);
+        }
+    };
+
+    const handleCallRequest = () => {
+        const isValid = /^\d{10}$/.test(phoneNumber);
+        setIsPhoneNumberValid(isValid);
+
+        if (isValid) {
+            console.log(`Requesting call to: ${phoneNumber}`);
+            let message = `Запит на дзвінок:\nНомер телефону: ${phoneNumber}`;
+            sendTelegramMessage(message);
+            setShowPhoneModal(false);
+        }
+    };
+
+    const handleMouseEnter = () => {
+        setPhoneIcon('/img/phone1.svg');
+    };
+
+    const handleMouseLeave = () => {
+        setPhoneIcon('/img/phone.svg');
+    };
+
     return (
-        <div style={{ marginTop: '160px', padding: '0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ marginTop: 'auto', padding: '0', display: 'flex', flexDirection: 'column', alignItems: 'center'  }} className='content'>
             <div style={{ position: 'relative', textAlign: 'center' }}>
-                <Link to="/">
-                    <img style={{ height: '500px', marginTop: '30px' }} src='/img/image.jpg' alt="Main" />
+                <Link to="/tovar">
+                    <img style={{ height: '100%', marginTop: '30px', width: '90%' }} src='/img/image.jpg' alt="Main" />
                 </Link>
                 <h2 style={{
                     position: 'absolute',
@@ -95,34 +166,55 @@ function Golovnasecond({ OnAddToCart, setFavoritOpend }) {
                     Автозапчастини нові та вживані
                 </h2>
             </div>
-      
-            <div className='golovnab' >
-                <h1 style={{marginRight:'50px'}}>Категорія товарів:</h1>
+            <div className='golovnab'>
+                <h1 style={{ marginRight: '50px' }}>Категорія товарів:</h1>
                 <li>
-                    <Link to='/'>
-                        <button style={{marginRight:'50px'}}>Мотори</button>
-                    </Link> 
+                    <Link to='/tovar'>
+                        <button style={{ marginRight: '50px' }}>Мотори</button>
+                    </Link>
                 </li>
                 <li>
-                    <Link to='/'>
-                        <button style={{marginRight:'50px'}}>Фари</button>
-                    </Link> 
+                    <Link to='/tovar'>
+                        <button style={{ marginRight: '50px' }}>Фари</button>
+                    </Link>
                 </li>
                 <li>
-                    <Link to='/'>
-                        <button style={{marginRight:'50px'}}>Б/У Автозапчастини</button>
-                    </Link> 
+                    <Link to='/tovar'>
+                        <button style={{ marginRight: '50px' }}>Б/У Автозапчастини</button>
+                    </Link>
                 </li>
                 <li>
-                    <Link to='/'>
-                        <button style={{marginRight:'50px'}}>Нові Автозапчастини</button>
-                    </Link> 
+                    <Link to='/tovar'>
+                        <button style={{ marginRight: '50px' }}>Нові Автозапчастини</button>
+                    </Link>
                 </li>
             </div>
-            <h1>Вас може зацікавити</h1>
-            <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
+            <h1 style={{marginTop:'50px'}}>Вас може зацікавити</h1>
+            <div className='chikavo' style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '0px', flexWrap: 'wrap' }}>
                 {showCards()}
             </div>
+            {showPhoneButton && (
+                <div className="phone-button" onClick={handlePhoneClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                    <img src={phoneIcon} alt="Phone" />
+                </div>
+            )}
+            {showPhoneModal && (
+                <div className="phone-modal">
+                    <div className="phone-modal-content">
+                        <span className="close" onClick={handleCloseModal}>&times;</span>
+                        <h2>Хочете, зателефонуємо Вам за 30 секунд?</h2>
+                        <input
+                            type="text"
+                            placeholder="Ваш номер телефону"
+                            value={phoneNumber}
+                            onChange={handlePhoneNumberChange}
+                            className={isPhoneNumberValid ? '' : 'invalid-input'}
+                        />
+                        {!isPhoneNumberValid && <p className="error-message">Введіть коректний номер телефону (9 цифр) починаючи з 0</p>}
+                        <button onClick={handleCallRequest} disabled={!phoneNumber}>Зателефонуйте</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -11,8 +11,10 @@ import * as XLSX from 'xlsx';
 function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
   const [isAddedToCart, setIsAddedToCart] = useState(added);
   const [excelData, setExcelData] = useState(null);
+  const [randomCards, setRandomCards] = useState([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const imageUrl = props.imageUrl && props.imageUrl.length > 0 ? props.imageUrl : ["/img/default-image.svg"];
 
@@ -26,12 +28,22 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
         const sheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(sheet);
         setExcelData(jsonData);
+
+        const shuffledData = shuffleArray([...jsonData]);
+        setRandomCards(shuffledData.slice(0, calculateNumberOfCards()));
       } catch (error) {
         console.error('Error fetching Excel data:', error);
       }
     };
 
     fetchExcelData();
+
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const shuffleArray = (array) => {
@@ -42,26 +54,32 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
     return array;
   };
 
+  const calculateNumberOfCards = () => {
+    if (windowWidth <= 768) {
+      return 2;
+    } else if (windowWidth <= 998) {
+      return 3;
+    } else {
+      return 4;
+    }
+  };
+
   const showCards = () => {
-    if (!excelData) {
+    if (!randomCards.length) {
       return (
         <div>Loading...</div>
       );
     }
 
-    const shuffledData = shuffleArray([...excelData]);
-    const randomCards = shuffledData.slice(0, 4);
-    
     return randomCards.map((item, index) => (
       <Card
         key={index}
         title={item['Опис']}
         price={item['Ціна']}
-        imageUrl={item['Фото товару'].split(',')}
+        imageUrl={item['Фото товару'] ? item['Фото товару'].split(',') : []}
         OnPlus={OnAddToCart}
         OnFavorite={() => console.log("Нажми на карточку")}
         id={item.id}
-        
         loading={false}
       />
     ));
@@ -78,7 +96,7 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
     <div className="try">
       <ul className="headerRight1">
         <li>
-          <Link to="/">
+          <Link to="/tovar">
             <img 
               height={25} 
               width={25} 
@@ -108,36 +126,69 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
             </Carousel>
           </div>
         </li>
-        <li className="details">
-          <h1>{title}</h1>
-          <h4>Продавець: Магазин Champion</h4>
-          <div className="try2">
-            <ul className="table">
-              <li className="price-section table-row">
-                <h1 className="table-cell" style={{ color: 'red', marginRight: '10px' }}>{price}₴</h1>
-              </li>
-              <li className="availability-row">
-                <p className="availability">є в наявності!</p>
-              </li>
-              <p className="table-row">В наявності: {props.description}</p>
-              <li className="lishka table-row">
-                <button 
-                  onClick={OnClickPlus} 
-                  disabled={isAddedToCart}
-                  className={isAddedToCart ? "added-to-cart" : ""}
-                >
-                  {isAddedToCart ? "У корзині" : "Купити"}
-                </button>
-              </li>
-              <li className="oplata">
-                <h5>Оплата готівкою, карткою, на розрахунковий рахунок або онлайн за допомогою Visa/Mastercard/MonoPay.</h5>
-                <img src='/img/visa.svg' alt="Visa" />
-                <img src='/img/monopay.svg' alt="MonoPay" />
-                <img src='/img/mastercard.svg' alt="MasterCard" />
-              </li>
-            </ul>
-          </div>
-        </li>
+        {windowWidth > 768 ? (
+          <li className="details">
+            <h1>{title}</h1>
+            <h4>Продавець: Магазин Champion</h4>
+            <div className="try2">
+              <ul className="table">
+                <li className="price-section table-row">
+                  <h1 className="table-cell" style={{ color: 'red', marginRight: '10px' }}>{price}₴</h1>
+                </li>
+                <li className="availability-row">
+                  <p className="availability">є в наявності!</p>
+                </li>
+                <p className="table-row">В наявності: {props.description}</p>
+                <li className="lishka table-row">
+                  <button 
+                    onClick={OnClickPlus} 
+                    disabled={isAddedToCart}
+                    className={isAddedToCart ? "added-to-cart" : ""}
+                  >
+                    {isAddedToCart ? "У корзині" : "Купити"}
+                  </button>
+                </li>
+                <li className="oplata">
+                  <h5>Оплата готівкою, карткою, на розрахунковий рахунок або онлайн за допомогою Visa/Mastercard/MonoPay.</h5>
+                  <img src='/img/visa.svg' alt="Visa" />
+                  <img src='/img/monopay.svg' alt="MonoPay" />
+                  <img src='/img/mastercard.svg' alt="MasterCard" />
+                </li>
+              </ul>
+            </div>
+          </li>
+        ) : (
+          <li className="details-mobile">
+            <h1>{title}</h1>
+            <h4>Продавець: Магазин Champion</h4>
+            <div className="try2">
+              <ul className="table">
+                <li className="price-section table-row">
+                  <h1 className="table-cell" style={{ color: 'red', marginRight: '10px' }}>{price}₴</h1>
+                </li>
+                <li className="availability-row">
+                  <p className="availability">є в наявності!</p>
+                </li>
+                <p className="table-row">В наявності: {props.description}</p>
+                <li className="lishka table-row">
+                  <button 
+                    onClick={OnClickPlus} 
+                    disabled={isAddedToCart}
+                    className={isAddedToCart ? "added-to-cart" : ""}
+                  >
+                    {isAddedToCart ? "У корзині" : "Купити"}
+                  </button>
+                </li>
+                <li className="oplata">
+                  <h5>Оплата готівкою, карткою, на розрахунковий рахунок або онлайн за допомогою Visa/Mastercard/MonoPay.</h5>
+                  <img src='/img/visa.svg' alt="Visa" />
+                  <img src='/img/monopay.svg' alt="MonoPay" />
+                  <img src='/img/mastercard.svg' alt="MasterCard" />
+                </li>
+              </ul>
+            </div>
+          </li>
+        )}
         <li className="advantages">
           <h3>Наші переваги:</h3>
           <ul className="advantages-list">
@@ -187,7 +238,7 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
                       вул. Кульпарківська, 110, <br />
                       Львів, Львівська область, 79000
                   </h5>
-                  </div>
+                </div>
               </li>
               <li className="delivery-variantu">
                 <img src='/img/nova-poshta.svg' className="delivery-icon" alt="Нова Пошта" />
@@ -199,8 +250,7 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
               <li className="delivery-variantu">
                 <img src='/img/nova-poshta.svg' className="delivery-icon" alt="Нова Пошта" />
                 <div>
-                 
-                <span>У поштомат Нової пошти</span>
+                  <span>У поштомат Нової пошти</span>
                   <h5>Безкоштовна доставка від 2500 грн</h5>
                 </div>
               </li>
@@ -216,12 +266,12 @@ function Try({ OnAddToCart, title, price, id, added = false, ...props }) {
         </li>
       </ul>
       
-      
       <div style={{marginTop:'100px'}} className='recommendations'>
-        
-        <div style={{display:'flex',alignItems:'center'}} className='cards-container'>
-        <h2 style={{marginRight:'20px',marginBottom:'20px'}}>Схожі товари:  </h2>
-          {showCards()}
+        <div style={{display:'flex ',alignItems:'center'}} >
+          <h2 style={{marginRight:'20px',marginBottom:'20px'}} >Схожі товари:  </h2>
+        </div>
+        <div style={{display:'flex'}}>
+          { showCards()}
         </div>
       </div>
       

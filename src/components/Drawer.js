@@ -7,7 +7,7 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
     const [orderHistory, setOrderHistory] = useState([]);
     const [viewHistory, setViewHistory] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [isConfirming, setIsConfirming] = useState(false); // Додано стейт для підтвердження замовлення
+    const [isConfirming, setIsConfirming] = useState(false);
     const { setCartItems, cartitems } = useContext(AppContext);
 
     const totalPrice = cartitems.reduce((sum, obj) => Number(obj.price) + sum, 0);
@@ -38,35 +38,32 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
     };
 
     const OnClickOrder = () => {
-        setIsConfirming(true); // Відкриваємо підтвердження замовлення
+        setIsConfirming(true);
     };
 
     const confirmOrder = () => {
         const newOrder = { items: [...cartitems], totalPrice, tax, date: new Date().toLocaleString(), phoneNumber };
         const updatedOrderHistory = [...orderHistory, newOrder];
 
-        // Збереження історії замовлень у localStorage
         localStorage.setItem('orderHistory', JSON.stringify(updatedOrderHistory));
 
         setIsComplete(true);
         setOrderHistory(updatedOrderHistory);
         setCartItems([]);
-        setIsConfirming(false); // Закриваємо підтвердження замовлення
+        setIsConfirming(false);
 
-        // Формуємо повідомлення для Telegram
-        let message = `Нове замовлення:\nДата: ${newOrder.date}\nТовар:\n`;
+        let message = `New order:\nDate: ${newOrder.date}\nItems:\n`;
         newOrder.items.forEach(item => {
             message += `${item.title} - ${item.price}₴\n`;
         });
-        message += `Разом: ${totalPrice}₴\n`;
-        message += `Телефон: ${phoneNumber}\n`;
+        message += `Total: ${totalPrice}₴\n`;
+        message += `Phone: ${phoneNumber}\n`;
 
-        // Відправляємо повідомлення
         sendTelegramMessage(message);
     };
 
     const cancelOrder = () => {
-        setIsConfirming(false); // Скасування підтвердження замовлення
+        setIsConfirming(false);
     };
 
     const handleViewHistory = () => {
@@ -97,7 +94,7 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
                     <img onClick={OnClose} className="remove1" height={30} width={30} src="/img/hrestuk.png" alt="close" />
                 </h2>
 
-                <button onClick={viewHistory ? handleBackToCart : handleViewHistory} style={{ marginBottom: '20px',color:'white' }}>
+                <button onClick={viewHistory ? handleBackToCart : handleViewHistory} style={{ marginBottom: '20px', color: 'white' }}>
                     {viewHistory ? 'Назад до кошика' : 'Історія замовлень'}
                 </button>
 
@@ -111,7 +108,7 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
                                     <div className="items">
                                         {order.items.map((item) => (
                                             <div className="cartitem" key={item.id}>
-                                                {item.imageUrl.length > 0 && (
+                                                {Array.isArray(item.imageUrl) && item.imageUrl.length > 0 && (
                                                     <img src={item.imageUrl[0]} alt={item.title} className="cartitemimg" />
                                                 )}
                                                 <div className="cartname">
@@ -125,12 +122,12 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
                                         <li className="togo">
                                             <span>Того:</span>
                                             <div></div>
-                                            <b>{order.totalPrice}$</b>
+                                            <b>{order.totalPrice}</b>
                                         </li>
                                         <li className="togo1">
                                             <span>Налог 5%</span>
                                             <div></div>
-                                            <b>{order.tax.toFixed(2)}$</b>
+                                            <b>{order.tax.toFixed(2)}</b>
                                         </li>
                                     </ul>
                                 </div>
@@ -145,12 +142,12 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
                             <div className="items">
                                 {items.map((obj) => (
                                     <div className="cartitem" key={obj.id}>
-                                        {obj.imageUrl.length > 0 && (
+                                        {Array.isArray(obj.imageUrl) && obj.imageUrl.length > 0 && (
                                             <img src={obj.imageUrl[0]} alt={obj.title} className="cartitemimg" />
                                         )}
                                         <div className="cartname">
                                             <p>{obj.title}</p>
-                                            <b>{obj.price}$</b>
+                                            <b>{obj.price}₴</b>
                                             <div>
                                                 <img onClick={() => OnRemove(obj.id)} className="remove" height={30} width={30} src="/img/hrestuk.png" alt="remove" />
                                             </div>
@@ -159,16 +156,16 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
                                 ))}
                             </div>
                         ) : (
-                            <Info 
-                            title={isComplete ? (
-                            "Заказ оформлено"
-                            ) : (
-                            <>
-                            Корзина Пуста
-                            <h5>Подивись наш каталог, обов'язково щось знайдеш</h5>
-                            </>
-                            )}
-                            image={isComplete ? "/img/zamovlenya.png" : "/img/box.png"} 
+                            <Info
+                                title={isComplete ? (
+                                    "Заказ оформлено"
+                                ) : (
+                                    <>
+                                        Корзина Пуста
+                                        <h5>Подивись наш каталог, обов'язково щось знайдеш</h5>
+                                    </>
+                                )}
+                                image={isComplete ? "/img/zamovlenya.png" : "/img/cartpusto.svg"}
                             />
                         )}
 
@@ -177,23 +174,23 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
                                 <li className="togo">
                                     <span>Разом:</span>
                                     <div></div>
-                                    <b>{totalPrice}$</b>
+                                    <b>{totalPrice}₴</b>
                                 </li>
                                 <li className="togo1">
                                     <span>Податок 5%</span>
                                     <div></div>
-                                    <b>{tax.toFixed(2)}$</b>
+                                    <b>{tax.toFixed(2)}₴</b>
                                 </li>
                                 <li>
                                     {isConfirming ? (
                                         <div className="confirm-order">
                                             <p>Для замовлення потрібно ввести номер і до вас перетелефонують</p>
-                                            <input 
+                                            <input
                                                 type="text"
                                                 placeholder="Введіть номер телефону"
                                                 value={phoneNumber}
                                                 onChange={handlePhoneNumberChange}
-                                                className="phone-input" // Додаємо клас для стилізації
+                                                className="phone-input"
                                             />
                                             <button onClick={confirmOrder} disabled={!phoneNumber}>
                                                 Підтвердити
@@ -219,7 +216,7 @@ function Drawer({ OnClose, OnRemove, items = [] }) {
                         )}
                     </>
                 )}
-            </div>  
+            </div>
         </div>
     );
 }
